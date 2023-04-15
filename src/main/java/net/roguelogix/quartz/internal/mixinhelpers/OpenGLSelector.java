@@ -97,59 +97,61 @@ public class OpenGLSelector {
 //        if (!doGlSearch) {
 //            return glfwCreateWindow(width, height, title, monitor, share);
 //        }
-        
-        // something failed or is going to fail, this is the safest option
-        if (!QuartzConfig.INIT_COMPLETED) {
-            return glfwCreateWindow(width, height, title, monitor, share);
-        }
-        
-        LOGGER.error("Quartz OpenGL version search enabled, this may potentially cause issues with some graphics cards, please report issues");
-        // TODO: add this line when quartz supports GL 3.2
-//        LOGGER.error("this can be disabled in phosphophyllite-client config if it is causing issues for you");
-        
-        // Version unavailable is expected to be thrown when searching for latest version, *sooo*
-        GLFWErrorCallback errorCallback = glfwSetErrorCallback(null);
-        
-        // for debugging purposes, allows you to specify a specific OpenGL version (or range) to be asked for
-        // driver may or may not respect what is asked for
-        int allowedVersions = Integer.parseInt(System.getProperty("quartz.glversions", "0000"));
-        
-        long window = NULL;
-        LOGGER.info("Searching for latest OpenGL version");
-        for (GLVersion value : GLVersion.allowedFromVersionInt(allowedVersions)) {
-            LOGGER.info(String.format("Attempting version %d.%d ", value.major, value.minor));
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, value.major);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, value.minor);
-            window = glfwCreateWindow(width, height, title, monitor, share);
-            if (window != NULL) {
-                LOGGER.info("SUCCESS");
-                long previousContext = glfwGetCurrentContext();
-                glfwMakeContextCurrent(window);
-                GL.createCapabilities();
-                LOGGER.info(String.format("Reported OpenGL version %d.%d", glGetInteger(GL_MAJOR_VERSION), glGetInteger(GL_MINOR_VERSION)));
-                glfwMakeContextCurrent(previousContext);
-                break;
-            }
-            LOGGER.info("FAILED");
-        }
-        
-        glfwSetErrorCallback(errorCallback);
-        
-        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
-            PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
-            int GLFWError = glfwGetError(pointerBuffer);
-            if (GLFWError != NULL && (window == NULL || GLFWError != GLFW_VERSION_UNAVAILABLE)) {
-                long stringAddr = pointerBuffer.get(0);
-                if (stringAddr != NULL) {
-                    // invoke MC's normal error handler, if it exists
-                    if (errorCallback != null) {
-                        errorCallback.invoke(GLFWError, stringAddr);
-                    } else {
-                        LOGGER.error("GLFW error: " + GLFWError + ": " + memUTF8(stringAddr));
-                    }
-                }
-            }
-        }
-        return window;
+
+        //Make the window
+        return glfwCreateWindow(width, height, title, monitor, share);
+//        // something failed or is going to fail, this is the safest option
+//        if (!QuartzConfig.INIT_COMPLETED) {
+//            return glfwCreateWindow(width, height, title, monitor, share);
+//        }
+//
+//        LOGGER.error("Quartz OpenGL version search enabled, this may potentially cause issues with some graphics cards, please report issues");
+//        // TODO: add this line when quartz supports GL 3.2
+////        LOGGER.error("this can be disabled in phosphophyllite-client config if it is causing issues for you");
+//
+//        // Version unavailable is expected to be thrown when searching for latest version, *sooo*
+//        GLFWErrorCallback errorCallback = glfwSetErrorCallback(null);
+//
+//        // for debugging purposes, allows you to specify a specific OpenGL version (or range) to be asked for
+//        // driver may or may not respect what is asked for
+//        int allowedVersions = Integer.parseInt(System.getProperty("quartz.glversions", "0000"));
+//
+//        long window = NULL;
+//        LOGGER.info("Searching for latest OpenGL version");
+//        for (GLVersion value : GLVersion.allowedFromVersionInt(allowedVersions)) {
+//            LOGGER.info(String.format("Attempting version %d.%d ", value.major, value.minor));
+//            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, value.major);
+//            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, value.minor);
+//            window = glfwCreateWindow(width, height, title, monitor, share);
+//            if (window != NULL) {
+//                LOGGER.info("SUCCESS");
+//                long previousContext = glfwGetCurrentContext();
+//                glfwMakeContextCurrent(window);
+//                GL.createCapabilities();
+//                LOGGER.info(String.format("Reported OpenGL version %d.%d", glGetInteger(GL_MAJOR_VERSION), glGetInteger(GL_MINOR_VERSION)));
+//                glfwMakeContextCurrent(previousContext);
+//                break;
+//            }
+//            LOGGER.info("FAILED");
+//        }
+//
+//        glfwSetErrorCallback(errorCallback);
+//
+//        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
+//            PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
+//            int GLFWError = glfwGetError(pointerBuffer);
+//            if (GLFWError != NULL && (window == NULL || GLFWError != GLFW_VERSION_UNAVAILABLE)) {
+//                long stringAddr = pointerBuffer.get(0);
+//                if (stringAddr != NULL) {
+//                    // invoke MC's normal error handler, if it exists
+//                    if (errorCallback != null) {
+//                        errorCallback.invoke(GLFWError, stringAddr);
+//                    } else {
+//                        LOGGER.error("GLFW error: " + GLFWError + ": " + memUTF8(stringAddr));
+//                    }
+//                }
+//            }
+//        }
+//        return window;
     }
 }

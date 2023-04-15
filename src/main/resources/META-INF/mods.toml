@@ -5,12 +5,16 @@ license="LGPL v2.1"
 [[mods]]
 modId="quartz"
 version="${version}"
-displayName="Quartz"
+displayName="Quartz (Linux-fixed)"
 #updateJSONURL="https://change.me.example.invalid/updates.json"
 displayURL="https://biggerseries.net/"
 # logoFile="examplemod.png"
 authors="RogueLogix"
 description='''
+This is a version of Quartz for linux that fixe OpenGL/GLFW selector for 1.19.2.
+This was made to fix booting TNP Limitless 6, other modpacks maybe fixed by this.
+May work on Windows or MacOS but probably not required.
+https://github.com/brendanfuller/Quartz-Linux-Fixed
 '''
 
 [[dependencies.quartz]]
